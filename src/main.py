@@ -6,6 +6,7 @@ import discord
 import requests
 from requests.exceptions import HTTPError
 import json
+from schema import Schema, SchemaError, And, Regex
 
 load_dotenv()
 
@@ -15,6 +16,7 @@ COMMAND = os.getenv('DISCORD_COMMAND_ROOT')
 SUBREDDIT_COMMAND = os.getenv('DISCORD_COMMAND_SUBREDDIT')
 DB_SAVE_COMMAND = os.getenv('DISCORD_COMMAND_DB_SAVE')
 DB_LOAD_COMMAND = os.getenv('DISCORD_COMMAND_DB_LOAD')
+DB_DELETE_COMMAND = os.getenv('DISCORD_COMMAND_DB_DELETE')
 API_ROOT = os.getenv('MEME_API_ROOT')
 MONGODB_URI = os.getenv('MONGODB_URI')
 DB = os.getenv('DB')
@@ -54,6 +56,11 @@ def check_link_die(link):
     return True
 
 
+meme_schema = Schema({
+    "name": str,
+    "url":  And(str, Regex("^(https:\/\/i.redd.it\/)\w+\.\w{3}$"))})
+
+
 @client.event
 async def on_message(message):
     if (message.content == COMMAND):
@@ -90,16 +97,34 @@ async def on_message(message):
         saved_name = message.content[len(DB_SAVE_COMMAND)+1:]
         saved_meme = {
             "name": saved_name,
-            # TODO: extract previous message sent by bot & extract meme url
-            "url": "https://link_to_meme_img"
+            # TODO: extract previous message sent by bot & extract meme url (for now hardcode eligible url)
+            "url": "https://i.redd.it/jfmjabdkj4g91.jpg",
         }
+        try:
+            meme_schema.validate(saved_meme)
+        except SchemaError as err:
+            await message.channel.send(err)
+            return
         collection.insert_one(saved_meme)
         await message.channel.send("Saved to database!")
 
-    # TODO: error handling when no match found
     if(message.content.startswith(DB_LOAD_COMMAND)):
         lookup_name = message.content[len(DB_LOAD_COMMAND)+1:]
-        found_meme = collection.find_one({"name": lookup_name})
-        await message.channel.send(found_meme["url"])
+        try:
+            found_meme = collection.find_one({"name": lookup_name})
+            await message.channel.send(found_meme["url"])
+        except TypeError:
+            await message.channel.send("Meme not found in database!")
+
+    if(message.content.startswith(DB_DELETE_COMMAND)):
+        lookup_name = message.content[len(DB_DELETE_COMMAND)+1:]
+        try:
+            found_meme = collection.find_one({"name": lookup_name})
+            found_meme["url"]
+        except TypeError:
+            await message.channel.send("Meme not found in database!")
+            return
+        collection.delete_one(found_meme)
+        await message.channel.send("Meme was deleted from database!")
 
 client.run(TOKEN)
