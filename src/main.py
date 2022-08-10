@@ -1,4 +1,3 @@
-import pymongo
 from pymongo import MongoClient
 import os
 from dotenv import load_dotenv
@@ -69,8 +68,8 @@ async def on_message(message):
             random_meme = get_random_memes(1)['memes'][0]
         await message.channel.send(random_meme['url'])
 
-    if(message.content.startswith(COMMAND + ' ') and len(message.content) <= len(COMMAND) + 2 and message.content[9].isnumeric()):
-        random_memes = get_random_memes(int(message.content[9]))['memes']
+    if(message.content.startswith(COMMAND + ' ') and len(message.content) <= len(COMMAND) + 2 and message.content[-1].isnumeric()):
+        random_memes = get_random_memes(int(message.content[-1]))['memes']
         random_memes_image_link = [e['url'] for e in random_memes]
         for link in random_memes_image_link:
             if(check_link_die(link) == False):
