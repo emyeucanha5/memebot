@@ -230,6 +230,35 @@ async def on_join(self, ctx):
 
 -[Host discord bot using repl.it](https://www.codementor.io/@garethdwyer/building-a-discord-bot-with-python-and-repl-it-miblcwejz)
 
+Use [Flask](https://www.fullstackpython.com/flask.html) framework.
+=> To create a server keep the bot alive for couple of hours before it die due to long period of time not touching server in repl.it
+
+Code for deployment => Creating server purpose
+
+```
+from flask import Flask
+from threading import Thread
+
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "I'm alive"
+
+def run():
+  app.run(host='0.0.0.0',port=8080)
+
+def keep_alive():
+    t = Thread(target=run)
+    t.start()
+```
+
+Adding two lines of these in main.py (Put that before setting up the TOKEN
+
+from keep_alive import keep_alive
+keep_alive()
+TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
+
 ## Related Links:
 
 - [Creating a Bot Account | discord.py](https://discordpy.readthedocs.io/en/stable/discord.html)
