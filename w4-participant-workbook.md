@@ -100,17 +100,17 @@ Now that we have the token for our bot, let's add it to our server. Do do this, 
 
 ## 4. Make the Bot say "Hello, World!"
 
-- TODO Slides/Explanation: what are decorators?
-- TODO Slides/Explanation: what are events and callbacks - what is async and await (extension)
+- This is the very first thing programmers often do when we start a brand new project
+- Though simple, this is oftentimes the most surefire way to ensure things are working properly as intended
 
   ```python
   # ./main.py (after the other imports)
-  import discord;
-  import dotenv;
-  import os;
-
-  dotenv.load_dotenv();
+  import discord
+  import dotenv
+  import os
   from discord.ext import commands
+
+  dotenv.load_dotenv()
 
   TOKEN = os.getenv('DISCORD_TOKEN')
   DISCORD_COMMAND_PREFIX = os.getenv('DISCORD_COMMAND_PREFIX')
@@ -119,12 +119,10 @@ Now that we have the token for our bot, let's add it to our server. Do do this, 
   @commands.command('hello')
   async def _hello_world(ctx):
       await ctx.send("hello world")
+  bot.add_command(_hello_world)
 
-  bot.add_command(_hello_world);
-  bot.run(TOKEN);
+  bot.run(TOKEN)
   ```
-
-- ✅
 
 <details>
 <summary><b>❓ What are events?</b></summary>
@@ -176,12 +174,14 @@ async def on_join(self, ctx):
 
 ## 5. Adding Commands
 
-  # ./main.py
-  @commands.command('hello')
-  async def _hello_world(ctx):
-      await ctx.send("hello world")
+- Let's add our very first command: we'd like the bot to send a message with the content "hello world"
 
-  bot.add_command(_hello_world);
+  ```python
+  @commands.command('hello') # This decorator turns this Pythonic-looking function into a Discord.py-defined event listener, responding to commands starting with "hello"
+  async def _hello_world(ctx): # ctx - context; where the chat message came from (i.e. which guild)
+    await ctx.send("hello world")
+  bot.add_command(_hello_world)
+  ```
 
 ## 6. Cogs
 
@@ -388,8 +388,8 @@ async def on_join(self, ctx):
 - Before we get started on any business logic, let's define a client event listener (i.e. user sends message in channel)
 
 ```python
-@commands.command(name='new') # This decorator turns this Pythonic-looking function into a Discord.py-defined event listener, responding to commands starting with "new"
-async def _new(ctx, *args): # on_message is a pre-defined event listener which takes an arbitrary number of parameters extracted from chat content
+@commands.command(name='new')
+async def _new(ctx, *args):
 
   # Recognize first variation of command (i.e. ;;random new)
     # Respond accordingly
@@ -428,7 +428,7 @@ async def _new(ctx, *args): # on_message is a pre-defined event listener which t
     random_memes = get_random_memes(int(args[0]))['memes']
     random_memes_image_link = [e['url'] for e in random_memes] # Destructure response to get all memes' URLs
     for link in random_memes_image_link: # Iterate over all fetched URLs & respond
-      await message.channel.send(link)
+      await ctx.send(link)
   ```
 
   > 📝 `random_memes_image_link = [e['url'] for e in random_memes]` - this particular quirky syntax is Python's list comprehension - it's a really powerful tool to quickly reshape data structure to our use case, if leveraged properly. See if you can reason about this line!
@@ -667,7 +667,7 @@ meme_schema = Schema({
 try:
   meme_schema.validate(saved_meme)
 except SchemaError as err:
-  await message.channel.send(err)
+  await ctx.send(err)
   return
 collection.insert_one(saved_meme)
 ```
@@ -680,9 +680,9 @@ collection.insert_one(saved_meme)
 ```python
 try:
   found_meme = collection.find_one({"name": lookup_name})
-  await message.channel.send(found_meme["url"])
+  await ctx.send(found_meme["url"])
 except TypeError:
-  await message.channel.send("Meme not found in database!")
+  await ctx.send("Meme not found in database!")
 ```
 
 ### Error-proof delete
