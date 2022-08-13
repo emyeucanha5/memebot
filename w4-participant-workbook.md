@@ -253,11 +253,12 @@ def keep_alive():
     t.start()
 ```
 
-Adding two lines of these in main.py (Put that before setting up the TOKEN
-
+Adding two lines of these in main.py. (Put that before setting up the TOKEN)
+```
 from keep_alive import keep_alive
 keep_alive()
 TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
+```
 
 ## Related Links:
 
