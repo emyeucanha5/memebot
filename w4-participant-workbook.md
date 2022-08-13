@@ -228,7 +228,7 @@ async def on_join(self, ctx):
 
 ## 6. Host your bot on repl.it
 
--[Host discord bot using repl.it](https://replit.com/talk/ask/Hosting-a-Discord-bot-on-Repl/18608)
+-[Host discord bot using repl.it](https://www.codementor.io/@garethdwyer/building-a-discord-bot-with-python-and-repl-it-miblcwejz)
 
 ## Related Links:
 
