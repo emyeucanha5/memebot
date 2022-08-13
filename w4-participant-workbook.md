@@ -104,8 +104,24 @@ Now that we have the token for our bot, let's add it to our server. Do do this, 
 - TODO Slides/Explanation: what are events and callbacks - what is async and await (extension)
 
   ```python
-  #
+  # ./main.py (after the other imports)
+  import discord;
+  import dotenv;
+  import os;
 
+  dotenv.load_dotenv();
+  from discord.ext import commands
+
+  TOKEN = os.getenv('DISCORD_TOKEN')
+  DISCORD_COMMAND_PREFIX = os.getenv('DISCORD_COMMAND_PREFIX')
+  bot = commands.Bot(command_prefix=DISCORD_COMMAND_PREFIX)
+
+  @commands.command('hello')
+  async def _hello_world(ctx):
+      await ctx.send("hello world")
+
+  bot.add_command(_hello_world);
+  bot.run(TOKEN);
   ```
 
 - ✅
@@ -160,7 +176,12 @@ async def on_join(self, ctx):
 
 ## 5. Adding Commands
 
--
+  # ./main.py
+  @commands.command('hello')
+  async def _hello_world(ctx):
+      await ctx.send("hello world")
+
+  bot.add_command(_hello_world);
 
 ## 6. Cogs
 
@@ -207,7 +228,7 @@ async def on_join(self, ctx):
 
 ## 6. Host your bot on repl.it
 
--
+-[Host discord bot using repl.it](https://replit.com/talk/ask/Hosting-a-Discord-bot-on-Repl/18608)
 
 ## Related Links:
 
