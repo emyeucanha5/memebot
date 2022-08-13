@@ -234,8 +234,8 @@ Use [Flask](https://www.fullstackpython.com/flask.html) framework.
 => To create a server keep the bot alive for couple of hours before it die due to long period of time not touching server in repl.it
 
 Code for deployment => Creating server purpose
+```python
 # ./keep_alive.py
-```
 from flask import Flask
 from threading import Thread
 
@@ -254,8 +254,8 @@ def keep_alive():
 ```
 
 Adding two lines of these in main.py. (Put that before setting up the TOKEN)
+```python
 # ./main.py
-```
 from keep_alive import keep_alive
 keep_alive()
 TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
